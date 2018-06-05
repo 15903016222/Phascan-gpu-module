@@ -1,0 +1,38 @@
+#!/bin/sh
+
+PIDFILE="/var/run/gpe-dm.pid"
+export DISPLAY=:0
+
+pid=`ps -e | awk '{if (match($4, ".*/main_arm$") || $4 == "main_arm") print $1}'`
+
+case "$1" in
+  start)
+	/sbin/insmod /home/tt/TT/DmaDoppler.ko
+	if [ -e /usr/bin/omap-demo ]; then
+		/usr/bin/omap-demo
+		rm /usr/bin/omap-demo
+	fi
+	/sbin/insmod /opt/gfxlibraries/gfx_rel_es3.x/pvrsrvkm.ko
+	/sbin/insmod /opt/gfxlibraries/gfx_rel_es3.x/omaplfb.ko
+	/usr/local/bin/pvrsrvinit
+	echo "Starting Doppler PA Soft 1.0.0.0"
+	cd /home/tt/TT
+	/home/tt/TT/osd.sh
+	/home/tt/TT/Physcan &
+	sleep 5
+	/usr/bin/xset s off -dpms
+  ;;
+
+  stop)
+        echo "Stopping Doppler PA Soft 1.0.0.0"
+	echo $pid
+        kill $pid
+	dd if=/dev/zero of=/dev/fb0 2>/dev/null || dd if=/dev/zero of=/dev/fb/0 2>/dev/null
+  ;;
+
+  *)
+        echo "usage: $0 { start | stop }"
+  ;;
+esac
+
+exit 0
