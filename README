@@ -1,1 +1,5 @@
 # OMAP3530的GPU核的驱动支持，以及opengles2.0的支持
+
+1. 使用说明：
+   将Phascan-gpu-module目录下的文件复制到Phascan仪器的根文件系统对应的目录
+   下，重新启动Phascan仪器即可
